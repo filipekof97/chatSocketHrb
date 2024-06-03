@@ -2,6 +2,7 @@
 static aMensagens := {}
 static aConexoes  := {}
 static lPause     := .f.
+static pServidor  := nil
 
 #define PORTA                        2002
 #define INTERVALO_THRED_EM_SEGUNDOS  2
@@ -43,7 +44,7 @@ procedure main()
 
    HB_INetInit()
 
-   HB_ThreadStart( @ControleConexoes(), nTipoConexao, cNomeUsuario, cIPServidor )
+   HB_ThreadStart( @ControleConexoes(), nTipoConexao, cNomeUsuario, Alltrim( cIPServidor ) )
 
    do while .t.
 
@@ -73,6 +74,10 @@ procedure main()
       HB_INetClose( pConexao )
    next
 
+   if !( pServidor == nil )
+      HB_INetClose( pServidor )
+   endif
+
    HB_InetCleanup()
 
 
@@ -81,7 +86,7 @@ return
 /*******************************************************************************/
 static procedure ControleConexoes( nTipoConexao, cNomeUsuario, cIPServidor)
 
-   local n, pConexao, cBuffer, nUltimaVez, pServidor
+   local n, pConexao, cBuffer, nUltimaVez
 
    if nTipoConexao == 1
       pServidor := HB_InetServer( PORTA )
